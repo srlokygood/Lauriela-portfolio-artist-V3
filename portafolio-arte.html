@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portafolio de Arte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+/* ============================================================
+   CONFIGURACIÓN RÁPIDA
+   Los colores de "sobre mí" de cada sección están marcados
+   más abajo con el comentario "COLOR EDITABLE" — cámbialos
+   cuando quieras sin tocar nada más.
+   ============================================================ */
+
+:root{
+  --prusia: #0F3057;
+  --prusia-oscuro: #0A2340;
+  --oro: #C9A227;
+  --papel: #F5EFE3;
+  --tinta: #1E1B16;
+  --tinta-suave: #5b564c;
+  --radio: 4px;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--prusia);
+  color:var(--papel);
+  font-family:"Work Sans", sans-serif;
+  min-height:100vh;
+  position:relative;
+}
+
+/* textura sutil de fondo */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.08;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:220px 220px;
+  z-index:0;
+}
+
+h1,h2,h3,.display{
+  font-family:"Fraunces", serif;
+  font-weight:500;
+  letter-spacing:.2px;
+  margin:0;
+}
+
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+
+.wrap{
+  position:relative;
+  z-index:1;
+  max-width:1180px;
+  margin:0 auto;
+  padding:0 28px;
+}
+
+/* -------------------- HEADER -------------------- */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:26px 0 10px;
+}
+.brand{
+  font-size:1.3rem;
+  cursor:pointer;
+}
+.brand span{color:var(--oro);}
+
+.btn-comision{
+  background:transparent;
+  border:1.5px solid var(--oro);
+  color:var(--oro);
+  padding:10px 20px;
+  border-radius:100px;
+  font-size:.92rem;
+  letter-spacing:.3px;
+  transition:background .18s ease, color .18s ease;
+}
+.btn-comision:hover{background:var(--oro);color:var(--prusia-oscuro);}
+
+/* -------------------- VISTAS -------------------- */
+.vista{display:none;}
+.vista.activa{display:block;}
+
+/* -------------------- INICIO / ROMPECABEZAS -------------------- */
+.intro-grid{
+  display:grid;
+  grid-template-columns: minmax(240px,360px) 1fr;
+  align-items:center;
+  gap:48px;
+  max-width:980px;
+  margin:18px auto 10px;
+}
+.intro{text-align:left;}
+.intro h1{font-size:1.95rem;line-height:1.18;}
+.intro p{color:#cfd9e4;margin-top:14px;font-size:1rem;line-height:1.6;}
+
+.puzzle-holder{
+  will-change:transform;
+}
+.puzzle-svg{width:100%;height:auto;display:block;overflow:visible;}
+
+@media(max-width:860px){
+  .intro-grid{grid-template-columns:1fr;gap:30px;max-width:520px;}
+  .intro{order:2;text-align:center;}
+  .puzzle-holder{order:1;}
+}
+.pieza{cursor:pointer;}
+.pieza rect.fondo-pieza{transition:filter .25s ease;}
+.pieza:hover rect.fondo-pieza{filter:brightness(1.12);}
+.pieza .etiqueta{
+  font-family:"Fraunces", serif;
+  fill:var(--papel);
+  font-size:22px;
+}
+.pieza .marco{
+  fill:none;
+  stroke:var(--prusia);
+  stroke-width:6;
+  stroke-linejoin:round;
+}
+
+/* -------------------- PUBLICACIONES (fondo blanco) -------------------- */
+.publicaciones-full{
+  background:#FFFFFF;
+  color:var(--tinta);
+  width:100vw;
+  position:relative;
+  left:50%;
+  margin-left:-50vw;
+  margin-top:70px;
+  padding-bottom:10px;
+  border-radius:36px 36px 0 0;
+  box-shadow:0 -22px 44px rgba(0,0,0,.28);
+  z-index:2;
+  will-change:transform;
+}
+.publicaciones-inner{
+  max-width:1180px;
+  margin:0 auto;
+  padding-left:28px;
+  padding-right:28px;
+}
+.cabecera-publicaciones{padding-top:56px;padding-bottom:38px;}
+.cabecera-publicaciones h2{font-size:1.85rem;}
+.cabecera-publicaciones .sub{color:var(--tinta-suave);margin-top:8px;font-size:.95rem;}
+
+.post{
+  margin-bottom:46px;
+  opacity:0;
+  transform:scale(.86);
+  filter:blur(14px);
+  transition:opacity .8s ease, transform .8s ease, filter .8s ease;
+}
+.post.visible{
+  opacity:1;
+  transform:scale(1);
+  filter:blur(0);
+}
+.post:last-child{margin-bottom:0;}
+
+/* imagen a un lado, texto al otro */
+.post-lado{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:380px; /* antes: height:440px */
+}
+.post-lado .img-lado{
+  width:100%;
+  height:100%;
+  min-height:380px;
+  object-fit:cover;
+  display:block;
+}
+.post-lado .texto-lado{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:12px;
+  padding:40px 64px; /* antes: 0 64px */
+}
+.post-lado.derecha .img-lado{order:2;}
+.post-lado.derecha .texto-lado{order:1;}
+
+.texto-lado .fecha,
+.texto-completo .fecha{
+  font-size:.78rem;
+  color:var(--tinta-suave);
+}
+.texto-lado h3,
+.texto-completo h3{
+  font-size:1.5rem;
+  color:var(--tinta);
+}
+.texto-lado p,
+.texto-completo p{
+  font-size:.96rem;
+  line-height:1.6;
+  color:var(--tinta-suave);
+  max-width:480px;
+}
+
+/* imagen a todo el ancho, con descripción arriba o abajo */
+.post-completo .img-completo{
+  width:100%;
+  aspect-ratio:16/9; /* antes: height:460px */
+  height:auto;
+  max-height:640px;
+  object-fit:cover;
+  display:block;
+}
+.post-completo .texto-completo{
+  padding:32px 28px;
+  max-width:1180px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+@media(max-width:780px){
+  .post-lado{grid-template-columns:1fr;min-height:auto;}
+  .post-lado .img-lado{aspect-ratio:4/3;height:auto;min-height:auto;order:1 !important;}
+  .post-lado .texto-lado{order:2 !important;padding:26px 24px;}
+  .post-completo .img-completo{aspect-ratio:4/3;max-height:400px;}
+}
+
+.volver-arriba-caja{
+  display:flex;
+  justify-content:center;
+  padding:20px 28px 54px;
+  opacity:0;
+  transform:translateY(16px);
+  transition:opacity .5s ease, transform .5s ease;
+}
+.volver-arriba-caja.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+.volver-arriba{
+  background:none;
+  border:1.5px solid var(--prusia);
+  color:var(--prusia);
+  padding:13px 28px;
+  border-radius:100px;
+  font-size:.92rem;
+  font-family:inherit;
+  transition:background .18s ease, color .18s ease;
+}
+.volver-arriba:hover{background:var(--prusia);color:#fff;}
+
+/* -------------------- GALERÍA DE CATEGORÍA -------------------- */
+.cat-hero{
+  padding:34px 0 10px;
+}
+.cat-hero .volver{
+  font-size:.85rem;
+  color:#cfd9e4;
+  opacity:.8;
+}
+.cat-hero .volver:hover{opacity:1;}
+.cat-hero h2{
+  font-size:2.4rem;
+  margin-top:10px;
+}
+.cat-hero .desc-cat{
+  max-width:520px;
+  color:#cfd9e4;
+  margin-top:10px;
+}
+
+.galeria{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(250px,1fr));
+  gap:26px;
+  margin:32px 0 50px;
+}
+
+.tarjeta{
+  background:var(--papel);
+  color:var(--tinta);
+  border-radius:var(--radio);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.tarjeta .media{
+  position:relative;
+  aspect-ratio:4/3;
+  background:#e7ddc9;
+  overflow:hidden;
+}
+.tarjeta .media img,
+.tarjeta .media video{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.tarjeta .dots{
+  position:absolute;
+  bottom:9px;left:0;right:0;
+  display:flex;justify-content:center;gap:6px;
+}
+.tarjeta .dots button{
+  width:7px;height:7px;border-radius:50%;
+  border:none;background:rgba(255,255,255,.55);padding:0;
+}
+.tarjeta .dots button.activo{background:#fff;}
+.tarjeta .cuerpo{
+  padding:16px 18px 18px;
+  display:flex;flex-direction:column;gap:8px;flex:1;
+}
+.tarjeta .nombre{font-family:"Fraunces",serif;font-size:1.12rem;}
+.tarjeta .texto{font-size:.9rem;color:var(--tinta-suave);line-height:1.45;flex:1;}
+.tarjeta .fila-precio{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:4px;
+  padding-top:12px;
+  border-top:1px solid #e2d6bd;
+}
+.tarjeta .precio{font-family:"Fraunces",serif;font-size:1.05rem;}
+.tarjeta .disponible{font-size:.78rem;color:#7a8f6c;}
+
+/* -------------------- SOBRE MÍ (pie por sección) -------------------- */
+.sobre-mi{
+  margin-top:20px;
+  padding:46px 0;
+  border-top:1px solid rgba(255,255,255,.12);
+}
+.sobre-mi .caja{
+  display:flex;
+  gap:34px;
+  align-items:center;
+  background:var(--color-seccion, #14395c); /* <- COLOR EDITABLE por sección, ver CONFIG.color */
+  border-radius:6px;
+  padding:30px;
+}
+.sobre-mi .foto{
+  width:118px;height:118px;border-radius:50%;
+  object-fit:cover;flex-shrink:0;
+  border:3px solid rgba(255,255,255,.5);
+}
+.sobre-mi h3{font-size:1.25rem;margin-bottom:8px;}
+.sobre-mi p{font-size:.94rem;line-height:1.55;color:rgba(255,255,255,.92);margin:0;}
+
+@media(max-width:560px){
+  .sobre-mi .caja{flex-direction:column;text-align:center;}
+}
+
+/* -------------------- COMISIÓN -------------------- */
+.comision-vista{
+  max-width:560px;
+  margin:20px auto 60px;
+  text-align:center;
+}
+.comision-vista h2{font-size:2.1rem;line-height:1.2;}
+.comision-vista .emocion{
+  color:var(--oro);
+  font-size:1rem;
+  margin-top:14px;
+  line-height:1.6;
+}
+form.formulario{
+  text-align:left;
+  margin-top:34px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+form.formulario label{
+  font-size:.82rem;
+  color:#cfd9e4;
+  display:block;
+  margin-bottom:6px;
+}
+form.formulario input,
+form.formulario select,
+form.formulario textarea{
+  width:100%;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.25);
+  color:var(--papel);
+  padding:11px 13px;
+  border-radius:4px;
+  font-family:inherit;
+  font-size:.95rem;
+}
+form.formulario textarea{min-height:110px;resize:vertical;}
+form.formulario button{
+  margin-top:6px;
+  background:var(--oro);
+  color:var(--prusia-oscuro);
+  border:none;
+  padding:14px 20px;
+  border-radius:100px;
+  font-size:.98rem;
+  font-weight:600;
+}
+.confirmacion{
+  margin-top:18px;
+  font-size:.9rem;
+  color:#a9e0b0;
+  display:none;
+}
+.confirmacion.activa{display:block;}
+
+/* -------------------- MODAL DE PRODUCTO (pantalla completa) -------------------- */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(6,16,26,.92);
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:26px;
+}
+.modal-overlay.activo{display:flex;}
+
+.modal-contenido{
+  position:relative;
+  background:var(--papel);
+  color:var(--tinta);
+  width:100%;
+  max-width:1000px;
+  max-height:92vh;
+  overflow:auto;
+  border-radius:8px;
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+}
+.modal-cerrar{
+  position:absolute;
+  top:14px;right:14px;
+  width:38px;height:38px;
+  border-radius:50%;
+  border:none;
+  background:rgba(0,0,0,.08);
+  color:var(--tinta);
+  font-size:1.4rem;
+  line-height:1;
+  z-index:2;
+}
+.modal-cerrar:hover{background:rgba(0,0,0,.16);}
+
+.modal-media{
+  position:relative;
+  background:#e7ddc9;
+  min-height:320px;
+}
+.modal-media img,
+.modal-media video{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.modal-media .dots{
+  position:absolute;bottom:14px;left:0;right:0;
+  display:flex;justify-content:center;gap:7px;
+}
+.modal-media .dots button{
+  width:8px;height:8px;border-radius:50%;border:none;
+  background:rgba(255,255,255,.55);padding:0;
+}
+.modal-media .dots button.activo{background:#fff;}
+
+.modal-detalle{
+  padding:44px 40px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.modal-categoria{
+  font-size:.78rem;
+  color:var(--tinta-suave);
+}
+.modal-detalle h2{font-size:1.7rem;}
+.modal-descripcion{
+  font-size:.98rem;
+  line-height:1.6;
+  color:var(--tinta-suave);
+  margin:6px 0 4px;
+}
+.modal-precio-fila{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 0;
+  border-top:1px solid #e2d6bd;
+  border-bottom:1px solid #e2d6bd;
+  margin-bottom:6px;
+}
+.modal-precio{font-family:"Fraunces",serif;font-size:1.3rem;}
+.modal-disponible{font-size:.8rem;color:#7a8f6c;}
+
+.modal-formulario{display:flex;flex-direction:column;gap:12px;margin-top:6px;}
+.modal-formulario label{font-size:.8rem;color:var(--tinta-suave);display:block;margin-bottom:5px;}
+.modal-formulario input{
+  width:100%;padding:11px 13px;border-radius:4px;
+  border:1px solid #d8cba9;background:#fff;color:var(--tinta);
+  font-family:inherit;font-size:.94rem;
+}
+.modal-formulario button{
+  margin-top:4px;
+  background:var(--prusia);
+  color:#fff;
+  border:none;
+  padding:13px 20px;
+  border-radius:100px;
+  font-size:.95rem;
+  font-weight:600;
+}
+.modal-formulario button:hover{background:var(--prusia-oscuro);}
+.modal-formulario.oculto{display:none;}
+
+@media(max-width:760px){
+  .modal-contenido{grid-template-columns:1fr;}
+  .modal-media{min-height:260px;}
+  .modal-detalle{padding:30px 26px 34px;}
+}
+
+/* -------------------- FOOTER SOCIAL (siempre visible) -------------------- */
+.footer-social{
+  padding:24px 0 40px;
+  display:flex;
+  justify-content:center;
+  gap:22px;
+  border-top:1px solid rgba(255,255,255,.1);
+  margin-top:10px;
+}
+.footer-social a{
+  width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:50%;
+  transition:border-color .18s ease, transform .18s ease;
+}
+.footer-social a:hover{border-color:var(--oro);transform:translateY(-2px);}
+.footer-social svg{width:17px;height:17px;fill:var(--papel);}
+
+@media(max-width:640px){
+  .intro h1{font-size:1.6rem;}
+  .cat-hero h2{font-size:1.9rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ============ HEADER ============ -->
+  <div class="topbar">
+    <div class="brand" onclick="irInicio()">Estudio <span>&amp;</span> Taller</div>
+    <button class="btn-comision" id="btnComision" style="display:none" onclick="irComision()">Comisión</button>
+  </div>
+
+  <!-- ============ VISTA: INICIO ============ -->
+  <section class="vista activa" id="vista-inicio">
+    <div class="intro-grid">
+      <div class="intro">
+        <h1>Cada pieza empieza siendo un fragmento</h1>
+        <p>Cerámica, pintura, croché y objetos con segunda vida. Elige una parte del rompecabezas para ver el trabajo completo.</p>
+      </div>
+
+      <div class="puzzle-holder" id="puzzleHolder">
+        <svg class="puzzle-svg" viewBox="0 0 600 600" id="svgPuzzle"></svg>
+      </div>
+    </div>
+
+    <!-- ============ PUBLICACIONES (fondo blanco, layouts variados) ============ -->
+    <div class="publicaciones-full" id="publicacionesFull">
+      <div class="publicaciones-inner cabecera-publicaciones">
+        <h2>Del taller</h2>
+        <p class="sub">Avances, procesos y piezas recién salidas del horno, la aguja o el pincel.</p>
+      </div>
+      <div id="publicacionesLista"></div>
+
+      <div class="volver-arriba-caja" id="volverArribaCaja">
+        <button class="volver-arriba" onclick="volverArriba()">Volver al inicio &uarr;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VISTA: GALERÍA DE CATEGORÍA ============ -->
+  <section class="vista" id="vista-categoria">
+    <div class="cat-hero">
+      <a class="volver" href="#" onclick="irInicio();return false;">&larr; volver al inicio</a>
+      <h2 id="catTitulo"></h2>
+      <p class="desc-cat" id="catDescripcion"></p>
+    </div>
+    <div class="galeria" id="catGaleria"></div>
+  </section>
+
+  <!-- ============ VISTA: COMISIÓN ============ -->
+  <section class="vista" id="vista-comision">
+    <div class="comision-vista">
+      <h2>¡Me encantaría crear algo para ti!</h2>
+      <p class="emocion">
+        Cada comisión es una pieza nueva que no existía antes de que me escribieras.
+        Cuéntame tu idea, y lo pensamos juntas hasta encontrar la forma correcta.
+      </p>
+
+      <form class="formulario" id="comisionFormulario" onsubmit="enviarComision(event)">
+        <div>
+          <label for="c-nombre">Nombre</label>
+          <input id="c-nombre" type="text" required placeholder="Tu nombre">
+        </div>
+        <div>
+          <label for="c-email">Correo</label>
+          <input id="c-email" type="email" required placeholder="tucorreo@ejemplo.com">
+        </div>
+        <div>
+          <label for="c-telefono">Teléfono (opcional)</label>
+          <input id="c-telefono" type="tel" placeholder="+57 300 000 0000">
+        </div>
+        <div>
+          <label for="c-tipo">¿Qué tipo de pieza te interesa?</label>
+          <select id="c-tipo">
+            <option value="ceramica">Cerámica</option>
+            <option value="pintura">Pintura</option>
+            <option value="croche">Croché</option>
+            <option value="upcycling">Upcycling</option>
+            <option value="otra">Aún no lo sé</option>
+          </select>
+        </div>
+        <div>
+          <label for="c-mensaje">Cuéntame tu idea</label>
+          <textarea id="c-mensaje" required placeholder="Tamaño, colores, para quién es, fecha límite..."></textarea>
+        </div>
+        <button type="submit">Enviar solicitud</button>
+        <p class="confirmacion" id="confirmacionComision">¡Gracias por tu interés! Nos estaremos comunicando contigo.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ SOBRE MÍ (cambia según la sección) ============ -->
+  <section class="sobre-mi" id="sobreMi" style="display:none">
+    <div class="wrap" style="padding:0">
+      <div class="caja" id="sobreMiCaja">
+        <img class="foto" id="sobreMiFoto" src="" alt="Foto de la artista">
+        <div>
+          <h3 id="sobreMiTitulo"></h3>
+          <p id="sobreMiTexto"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REDES SOCIALES (siempre visible) ============ -->
+  <div class="footer-social">
+    <a href="https://instagram.com/TU_USUARIO" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.97.24 2.43.4a4.9 4.9 0 0 1 1.77 1.15 4.9 4.9 0 0 1 1.15 1.77c.17.46.36 1.26.4 2.43.07 1.25.07 1.65.07 4.85s0 3.6-.07 4.85c-.05 1.17-.24 1.97-.4 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.46.17-1.26.36-2.43.4-1.25.07-1.65.07-4.85.07s-3.6 0-4.85-.07c-1.17-.05-1.97-.24-2.43-.4a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.17-.46-.36-1.26-.4-2.43C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.17.24-1.97.4-2.43a4.9 4.9 0 0 1 1.15-1.77A4.9 4.9 0 0 1 5.6 1.8c.46-.17 1.26-.36 2.43-.4C9.28 1.33 9.68 1.33 12 1.33m0 1.8c-3.15 0-3.52 0-4.76.07-1.02.05-1.57.21-1.94.35-.49.19-.83.42-1.2.78-.36.37-.6.71-.78 1.2-.14.37-.3.92-.35 1.94C3 8.4 3 8.77 3 11.92s0 3.52.07 4.76c.05 1.02.21 1.57.35 1.94.19.49.42.83.78 1.2.37.36.71.6 1.2.78.37.14.92.3 1.94.35 1.24.06 1.6.07 4.76.07s3.52 0 4.76-.07c1.02-.05 1.57-.21 1.94-.35.49-.19.83-.42 1.2-.78.36-.37.6-.71.78-1.2.14-.37.3-.92.35-1.94.06-1.24.07-1.6.07-4.76s0-3.52-.07-4.76c-.05-1.02-.21-1.57-.35-1.94a3.1 3.1 0 0 0-.78-1.2 3.1 3.1 0 0 0-1.2-.78c-.37-.14-.92-.3-1.94-.35C15.52 3.1 15.15 3.1 12 3.1Zm0 4.6a4.3 4.3 0 1 1 0 8.6 4.3 4.3 0 0 1 0-8.6Zm0 1.8a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm5.5-2a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>
+    </a>
+    <a href="https://www.tiktok.com/@TU_USUARIO" target="_blank" rel="noopener" aria-label="TikTok">
+      <svg viewBox="0 0 24 24"><path d="M14.5 2h2.6c.16 1.1.66 2.02 1.5 2.78.83.75 1.85 1.16 3.06 1.24v2.63c-1.32-.02-2.5-.34-3.56-.98-.4-.24-.75-.5-1.06-.8v7.14c0 1.53-.4 2.85-1.21 3.98a5.86 5.86 0 0 1-3.14 2.2 6.15 6.15 0 0 1-4.16-.2 5.86 5.86 0 0 1-2.94-2.6 5.98 5.98 0 0 1-.6-4.13 5.87 5.87 0 0 1 2.1-3.5 5.98 5.98 0 0 1 4.34-1.3v2.68a3.2 3.2 0 0 0-2.14.32 3.16 3.16 0 0 0-1.4 1.62 3.24 3.24 0 0 0 .04 2.42c.3.71.8 1.24 1.5 1.6.7.35 1.44.4 2.2.16.77-.24 1.36-.7 1.76-1.4.28-.48.42-1 .42-1.58L14.5 2Z"/></svg>
+    </a>
+    <a href="https://youtube.com/@TU_USUARIO" target="_blank" rel="noopener" aria-label="YouTube">
+      <svg viewBox="0 0 24 24"><path d="M22.5 7.2s-.22-1.56-.9-2.25c-.86-.9-1.83-.9-2.27-.96C16.2 3.7 12 3.7 12 3.7h-.02s-4.2 0-7.33.29c-.44.06-1.41.06-2.27.96-.68.69-.9 2.25-.9 2.25S1.2 9 1.2 10.8v1.4c0 1.8.28 3.6.28 3.6s.22 1.56.9 2.25c.86.9 1.98.87 2.48.97 1.8.17 7.14.28 7.14.28s4.2-.01 7.33-.3c.44-.05 1.41-.05 2.27-.96.68-.69.9-2.25.9-2.25s.28-1.8.28-3.6v-1.4c0-1.8-.28-3.6-.28-3.6ZM9.75 14.9V8.9l5.75 3-5.75 3Z"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<!-- ============ MODAL DE PRODUCTO (pantalla completa) ============ -->
+<div class="modal-overlay" id="modalProducto">
+  <div class="modal-contenido">
+    <button class="modal-cerrar" onclick="cerrarProductoModal()" aria-label="Cerrar">&times;</button>
+
+    <div class="modal-media" id="modalMedia"></div>
+
+    <div class="modal-detalle">
+      <span class="modal-categoria" id="modalCategoria"></span>
+      <h2 id="modalNombre"></h2>
+      <p class="modal-descripcion" id="modalDescripcion"></p>
+      <div class="modal-precio-fila">
+        <span class="modal-precio" id="modalPrecio"></span>
+        <span class="modal-disponible" id="modalDisponible"></span>
+      </div>
+
+      <form class="modal-formulario" id="modalFormulario" onsubmit="enviarInteresProducto(event)">
+        <div>
+          <label for="p-nombre">Nombre</label>
+          <input id="p-nombre" type="text" required placeholder="Tu nombre">
+        </div>
+        <div>
+          <label for="p-email">Correo</label>
+          <input id="p-email" type="email" required placeholder="tucorreo@ejemplo.com">
+        </div>
+        <button type="submit">Comprar</button>
+      </form>
+      <p class="confirmacion" id="confirmacionProducto">¡Gracias por tu interés! Nos estaremos comunicando contigo.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN DEL PORTAFOLIO
+   -------------------------------------------------------------
+   Todo lo que necesitas editar está aquí. Reemplaza:
+   - tileImage: la foto que aparece en la pieza del rompecabezas
+   - color: color de fondo de "sobre mí" para esa sección (EDITABLE)
+   - sobreMi.foto / sobreMi.texto: tu foto y texto para esa sección
+   - products: cada objeto es una tarjeta (images: 1 o más, video opcional)
+   ============================================================ */
+
+const CONFIG = {
+  /* -------------------------------------------------------------
+     PUBLICACIONES DEL INICIO
+     "tipo" define el layout:
+       "izquierda"      -> imagen a la izquierda, texto a la derecha
+       "derecha"        -> imagen a la derecha, texto a la izquierda
+       "completo-abajo" -> imagen a todo el ancho, descripción abajo
+       "completo-arriba"-> descripción arriba, imagen a todo el ancho
+     Agrega, quita o reordena objetos libremente.
+     ------------------------------------------------------------- */
+  publicaciones: [
+    {
+      tipo: "izquierda",
+      imagen: "assets/publicaciones/records.jpg",
+      fecha: "Septiembre 2026",
+      titulo: "El arte en el estudio",
+      texto: "Mi desarrollo constante es una marca, cada una es un pequeño detalle en el gran cuadro que es mi carreara"
+    },
+    {
+      tipo: "completo-abajo",
+      imagen: "assets/publicaciones/bisabuela.jpeg",
+      fecha: "septiembre 2026",
+      titulo: "Ausencia",
+      texto: "Una silla vacía y una vela se convierten en símbolos de una presencia que ya no está. Esta pintura fue realizada como homenaje a mi bisabuela, pocos días después de su fallecimiento. La silla representa el espacio que dejó su ausencia; la vela, la memoria y la luz que permanece. Una obra nacida del duelo, pero también del deseo de conservar su presencia a través del arte."
+    },
+    {
+      tipo: "derecha",
+      imagen: "assets/publicaciones/working.jpg",
+      fecha: "Agosto 2026",
+      titulo: "Mi proceso",
+      texto: "El arte comienza como un dato: una idea. Luego se transforma en líneas, formas y colores a través del boceto, hasta convertirse finalmente en una obra. Cada creación es el resultado de un proceso: observar, interpretar, transformar y plasmar."
+    },
+    {
+      tipo: "completo-abajo",
+      imagen: "assets/publicaciones/Carboncillo.jpeg",
+      fecha: "Marzo 2025",
+      titulo: "Dibujar sin forma: exploración del volumen",
+      texto: "Ejercicio académico enfocado en comprender y representar el volumen a través del dibujo, explorando la forma, la luz, la sombra y la percepción espacial."
+    },
+    {
+      tipo: "derecha",
+      imagen: "assets/publicaciones/entesobrelagrimasdebbylagrimas.jpeg",
+      fecha: "Agosto 2025",
+      titulo: "Lagrimar",
+      texto: "En medio del musgo habita un ente construido en cerámica, rodeado por frascos que alguna vez contuvieron lágrimas y que ahora yacen rotos a su alrededor. La obra explora la fragilidad, la pérdida y la acumulación emocional. Los frascos representan aquello que intentamos contener, mientras el ente permanece como testigo de lo que ya no puede ser guardado."
+    }
+  ],
+
+  categorias: [
+    {
+      id: "ceramica",
+      nombre: "Cerámica",
+      descripcion: "Piezas torneadas y modeladas a mano, cada una con su propia cocción y su propio carácter.",
+      tileImage: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=800&auto=format&fit=crop",
+      color: "#B5651D", /* COLOR EDITABLE: sobre mí — cerámica */
+      sobreMi: {
+        foto: "https://images.unsplash.com/photo-1544413660-299165566b1d?q=80&w=400&auto=format&fit=crop",
+        texto: "Empecé en cerámica buscando algo que se pudiera tocar de principio a fin. Cada pieza pasa por mis manos varias veces antes del horno."
+      },
+      products: [
+        { nombre:"Cuenco Terracota", precio:"$85.000", disponible:true, descripcion:"Cuenco de barro rojo, esmalte mate, apto para uso diario.",
+          images:["https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=800&auto=format&fit=crop","https://images.unsplash.com/photo-1493106819501-66d381c466f1?q=80&w=800&auto=format&fit=crop"] },
+        { nombre:"Jarrón Ola", precio:"$120.000", disponible:true, descripcion:"Jarrón alto con textura ondulada, esmalte azul profundo.",
+          images:["https://images.unsplash.com/photo-1493106819501-66d381c466f1?q=80&w=800&auto=format&fit=crop"] },
+        { nombre:"Set de Tazas (x4)", precio:"$150.000", disponible:false, descripcion:"Set de cuatro tazas esmaltadas, cada una ligeramente distinta.",
+          images:["https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?q=80&w=800&auto=format&fit=crop"] }
+      ]
+    },
+    {
+      id: "pintura",
+      nombre: "Pictorica",
+      descripcion: "En cada cuadro, en cada pincelada plazmo un recuerdo, un sentimiento, una idea",
+      tileImage: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=800&auto=format&fit=crop",
+      color: "#1B4B43", /* COLOR EDITABLE: sobre mí — pintura */
+      sobreMi: {
+        foto: "assets/perfil/perfil_pintura.jpg",
+        texto: "Quiero conectar eternamente el cielo y la tierra. Tomo aquello que encuentro en el mundo, lo transformo y lo hago mío para plasmar mi propia esencia. Así, cada obra se convierte en un puente: una forma de que alguien más pueda conectar conmigo y ver el mundo a través de mis ojos."
+      },
+      products: [
+        { nombre:"JK Golden - cantante de los BTS", precio:"$300.000", disponible:true, descripcion:"Óleo sobre canva con lamina dorada, 15x20.5cm.",
+          images:["assets/pinturas/jkgolden.png"] },
+        { nombre:"Love me Again", precio:"$150.000", disponible:true, descripcion:"Óleo sobre canva, 15x20.5cm",
+          images:["assets/pinturas/loveagain.png"] },
+        { nombre:"Jiming Face", precio:"$200.000", disponible:true, descripcion:"Óleo sobre canva con lamina dorada, 15x20.5cm",
+          images:["assets/pinturas/jimin.png"] }
+      ]
+    },
+    {
+      id: "croche",
+      nombre: "Croché",
+      descripcion: "Prendas y objetos tejidos a mano, hilo por hilo, sin dos piezas iguales.",
+      tileImage: "https://images.unsplash.com/photo-1620401537278-8b3134ea9c9c?q=80&w=800&auto=format&fit=crop",
+      color: "#A24B5E", /* COLOR EDITABLE: sobre mí — croché */
+      sobreMi: {
+        foto: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop",
+        texto: "Aprendí a tejer de mi abuela y todavía uso algunas de sus agujas. Tejo despacio, casi siempre de noche."
+      },
+      products: [
+        { nombre:"Bolso Trigal", precio:"$70.000", disponible:true, descripcion:"Bolso tejido en algodón crudo con asas reforzadas.",
+          images:["https://images.unsplash.com/photo-1620401537278-8b3134ea9c9c?q=80&w=800&auto=format&fit=crop"] },
+        { nombre:"Chaleco Musgo", precio:"$135.000", disponible:true, descripcion:"Chaleco tejido en lana, talla única ajustable.",
+          images:["https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?q=80&w=800&auto=format&fit=crop"] }
+      ]
+    },
+    {
+      id: "upcycling",
+      nombre: "Upcycling",
+      descripcion: "Objetos que ya existían y ahora tienen un uso nuevo. Nada se compra nuevo si se puede rescatar.",
+      tileImage: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?q=80&w=800&auto=format&fit=crop",
+      color: "#5C6B3C", /* COLOR EDITABLE: sobre mí — upcycling */
+      sobreMi: {
+        foto: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=400&auto=format&fit=crop",
+        texto: "Guardo cosas que otros botarían: telas, frascos, madera vieja. Upcycling es, para mí, la forma más honesta de reciclar."
+      },
+      products: [
+        { nombre:"Lámpara de Frasco", precio:"$60.000", disponible:true, descripcion:"Lámpara hecha con frasco de vidrio reutilizado y base de madera recuperada.",
+          images:["https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?q=80&w=800&auto=format&fit=crop"] },
+        { nombre:"Cojín Retazos", precio:"$45.000", disponible:true, descripcion:"Cojín hecho con retazos de tela de proyectos anteriores.",
+          images:["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=800&auto=format&fit=crop"] }
+      ]
+    }
+  ]
+};
+
+/* ============================================================
+   ROMPECABEZAS — piezas que encajan de verdad (SVG con "dientes")
+   ============================================================ */
+const NS = "http://www.w3.org/2000/svg";
+
+// rutas de las 4 piezas (600x600), ya calculadas para que encajen entre sí
+const RUTAS = {
+  tl: "M26,0 L290,0 Q300,0 300,10 L300,95 Q300,105 310,105 L330,105 Q340,105 340,115 L340,185 Q340,195 330,195 L310,195 Q300,195 300,205 L300,290 Q300,300 290,300 L205,300 Q195,300 195,310 L195,330 Q195,340 185,340 L115,340 Q105,340 105,330 L105,310 Q105,300 95,300 L10,300 Q0,300 0,290 L0,26 Q0,0 26,0 Z",
+  tr: "M310,0 L574,0 Q600,0 600,26 L600,290 Q600,300 590,300 L505,300 Q495,300 495,310 L495,330 Q495,340 485,340 L415,340 Q405,340 405,330 L405,310 Q405,300 395,300 L310,300 Q300,300 300,290 L300,205 Q300,195 310,195 L330,195 Q340,195 340,185 L340,115 Q340,105 330,105 L310,105 Q300,105 300,95 L300,10 Q300,0 310,0 Z",
+  bl: "M10,300 L95,300 Q105,300 105,310 L105,330 Q105,340 115,340 L185,340 Q195,340 195,330 L195,310 Q195,300 205,300 L290,300 Q300,300 300,310 L300,395 Q300,405 310,405 L330,405 Q340,405 340,415 L340,485 Q340,495 330,495 L310,495 Q300,495 300,505 L300,590 Q300,600 290,600 L26,600 Q0,600 0,574 L0,310 Q0,300 10,300 Z",
+  br: "M310,300 L395,300 Q405,300 405,310 L405,330 Q405,340 415,340 L485,340 Q495,340 495,330 L495,310 Q495,300 505,300 L590,300 Q600,300 600,310 L600,574 Q600,600 574,600 L310,600 Q300,600 300,590 L300,505 Q300,495 310,495 L330,495 Q340,495 340,485 L340,415 Q340,405 330,405 L310,405 Q300,405 300,395 L300,310 Q300,300 310,300 Z"
+};
+
+const CENTROS = { tl:[140,140], tr:[460,140], bl:[140,460], br:[460,460] };
+
+function construirRompecabezas(){
+  const svg = document.getElementById("svgPuzzle");
+  svg.innerHTML = "";
+
+  const defs = document.createElementNS(NS,"defs");
+  svg.appendChild(defs);
+
+  const claves = ["tl","tr","bl","br"];
+
+  CONFIG.categorias.forEach((cat, i) => {
+    const clave = claves[i];
+    const clipId = "clip-" + clave;
+
+    const clipPath = document.createElementNS(NS,"clipPath");
+    clipPath.setAttribute("id", clipId);
+    const clipShape = document.createElementNS(NS,"path");
+    clipShape.setAttribute("d", RUTAS[clave]);
+    clipPath.appendChild(clipShape);
+    defs.appendChild(clipPath);
+
+    const g = document.createElementNS(NS,"g");
+    g.setAttribute("class","pieza");
+    g.setAttribute("tabindex","0");
+    g.setAttribute("role","button");
+    g.setAttribute("aria-label","Ver " + cat.nombre);
+    g.addEventListener("click", () => irCategoria(cat.id));
+    g.addEventListener("keypress", (e) => { if(e.key === "Enter") irCategoria(cat.id); });
+
+    const clipGroup = document.createElementNS(NS,"g");
+    clipGroup.setAttribute("clip-path", "url(#" + clipId + ")");
+
+    const rectFondo = document.createElementNS(NS,"rect");
+    rectFondo.setAttribute("class","fondo-pieza");
+    rectFondo.setAttribute("x","0");rectFondo.setAttribute("y","0");
+    rectFondo.setAttribute("width","600");rectFondo.setAttribute("height","600");
+    rectFondo.setAttribute("fill", cat.color);
+    clipGroup.appendChild(rectFondo);
+
+    const img = document.createElementNS(NS,"image");
+    img.setAttribute("href", cat.tileImage);
+    img.setAttribute("x","-40");img.setAttribute("y","-40");
+    img.setAttribute("width","680");img.setAttribute("height","680");
+    img.setAttribute("preserveAspectRatio","xMidYMid slice");
+    img.setAttribute("opacity","0.55");
+    clipGroup.appendChild(img);
+
+    g.appendChild(clipGroup);
+
+    const marco = document.createElementNS(NS,"path");
+    marco.setAttribute("class","marco");
+    marco.setAttribute("d", RUTAS[clave]);
+    g.appendChild(marco);
+
+    const [cx,cy] = CENTROS[clave];
+    const texto = document.createElementNS(NS,"text");
+    texto.setAttribute("class","etiqueta");
+    texto.setAttribute("x", cx);
+    texto.setAttribute("y", cy);
+    texto.setAttribute("text-anchor","middle");
+    texto.textContent = cat.nombre;
+    g.appendChild(texto);
+
+    svg.appendChild(g);
+  });
+}
+
+/* ============================================================
+   PUBLICACIONES (fondo blanco, layouts variados)
+   ============================================================ */
+function crearPublicacion(pub){
+  const post = document.createElement("div");
+
+  if(pub.tipo === "izquierda" || pub.tipo === "derecha"){
+    post.className = "post post-lado" + (pub.tipo === "derecha" ? " derecha" : "");
+    post.innerHTML = `
+      <img class="img-lado" src="${pub.imagen}" alt="${pub.titulo}">
+      <div class="texto-lado">
+        <span class="fecha">${pub.fecha || ""}</span>
+        <h3>${pub.titulo}</h3>
+        <p>${pub.texto}</p>
+      </div>
+    `;
+    return post;
+  }
+
+  // completo-abajo / completo-arriba
+  post.className = "post post-completo";
+  const img = `<img class="img-completo" src="${pub.imagen}" alt="${pub.titulo}">`;
+  const texto = `
+    <div class="texto-completo publicaciones-inner">
+      <span class="fecha">${pub.fecha || ""}</span>
+      <h3>${pub.titulo}</h3>
+      <p>${pub.texto}</p>
+    </div>
+  `;
+  post.innerHTML = (pub.tipo === "completo-arriba") ? (texto + img) : (img + texto);
+  return post;
+}
+
+function construirPublicaciones(){
+  const lista = document.getElementById("publicacionesLista");
+  lista.innerHTML = "";
+  CONFIG.publicaciones.forEach(pub => {
+    const post = crearPublicacion(pub);
+    lista.appendChild(post);
+    observadorPublicaciones.observe(post);
+  });
+}
+
+const observadorPublicaciones = new IntersectionObserver((entradas) => {
+  entradas.forEach(entrada => {
+    if(entrada.isIntersecting){
+      entrada.target.classList.add("visible");
+      observadorPublicaciones.unobserve(entrada.target);
+    }
+  });
+}, { threshold: 0.2, rootMargin: "0px 0px -60px 0px" });
+
+/* ============================================================
+   PARALLAX: el rompecabezas se queda atrás, las publicaciones
+   avanzan por encima al hacer scroll.
+   ============================================================ */
+const puzzleHolder = document.getElementById("puzzleHolder");
+const publicacionesFull = document.getElementById("publicacionesFull");
+const volverArribaCaja = document.getElementById("volverArribaCaja");
+
+let ticking = false;
+function actualizarParallax(){
+  const y = window.scrollY;
+
+  // el rompecabezas se mueve más lento que el scroll -> se "queda atrás"
+  puzzleHolder.style.transform = `translateY(${y * 0.25}px) scale(${Math.max(1 - y * 0.00025, 0.9)})`;
+
+  // las publicaciones avanzan levemente por encima
+  publicacionesFull.style.transform = `translateY(${y * -0.04}px)`;
+
+  ticking = false;
+}
+
+window.addEventListener("scroll", () => {
+  if(!ticking){
+    requestAnimationFrame(actualizarParallax);
+    ticking = true;
+  }
+}, { passive:true });
+
+// mostrar "volver al inicio" cuando se llega al final de las publicaciones
+const observadorFinal = new IntersectionObserver((entradas) => {
+  entradas.forEach(entrada => {
+    volverArribaCaja.classList.toggle("visible", entrada.isIntersecting);
+  });
+}, { threshold: 0.6 });
+observadorFinal.observe(volverArribaCaja);
+
+function volverArriba(){
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* ============================================================
+   NAVEGACIÓN
+   ============================================================ */
+function ocultarTodas(){
+  document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
+}
+
+function irInicio(actualizarHash = true){
+  ocultarTodas();
+  document.getElementById("vista-inicio").classList.add("activa");
+  document.getElementById("btnComision").style.display = "none";
+  document.getElementById("sobreMi").style.display = "none";
+  window.scrollTo(0,0);
+  actualizarParallax();
+  if(actualizarHash && location.hash !== "") history.pushState(null, "", location.pathname + location.search);
+}
+
+function irCategoria(id, actualizarHash = true){
+  const cat = CONFIG.categorias.find(c => c.id === id);
+  if(!cat) { irInicio(); return; }
+
+  ocultarTodas();
+  document.getElementById("vista-categoria").classList.add("activa");
+  document.getElementById("catTitulo").textContent = cat.nombre;
+  document.getElementById("catDescripcion").textContent = cat.descripcion;
+
+  const galeria = document.getElementById("catGaleria");
+  galeria.innerHTML = "";
+  cat.products.forEach(p => galeria.appendChild(crearTarjeta(p, cat)));
+
+  mostrarSobreMi(cat);
+  document.getElementById("btnComision").style.display = "inline-block";
+  window.scrollTo(0,0);
+  if(actualizarHash) location.hash = cat.id;
+}
+
+function irComision(actualizarHash = true){
+  ocultarTodas();
+  document.getElementById("vista-comision").classList.add("activa");
+  document.getElementById("btnComision").style.display = "none";
+  document.getElementById("sobreMi").style.display = "none";
+
+  const formulario = document.getElementById("comisionFormulario");
+  formulario.reset();
+  formulario.style.display = "flex";
+  document.getElementById("confirmacionComision").classList.remove("activa");
+
+  window.scrollTo(0,0);
+  if(actualizarHash) location.hash = "comision";
+}
+
+function mostrarSobreMi(cat){
+  const seccion = document.getElementById("sobreMi");
+  seccion.style.display = "block";
+  document.getElementById("sobreMiCaja").style.setProperty("--color-seccion", cat.color);
+  document.getElementById("sobreMiFoto").src = cat.sobreMi.foto;
+  document.getElementById("sobreMiTitulo").textContent = "Sobre mí y " + cat.nombre.toLowerCase();
+  document.getElementById("sobreMiTexto").textContent = cat.sobreMi.texto;
+}
+
+/* ============================================================
+   TARJETAS DE PRODUCTO (con galería de 1 o más imágenes/video)
+   ============================================================ */
+function crearTarjeta(p, cat){
+  const card = document.createElement("div");
+  card.className = "tarjeta";
+  card.setAttribute("tabindex","0");
+  card.setAttribute("role","button");
+  card.setAttribute("aria-label","Ver " + p.nombre);
+
+  const media = document.createElement("div");
+  media.className = "media";
+
+  let indice = 0;
+  const medios = [...p.images];
+  if(p.video) medios.push({video: p.video});
+
+  function pintarMedio(){
+    media.querySelectorAll("img,video").forEach(el => el.remove());
+    const actual = medios[indice];
+    if(typeof actual === "string"){
+      const img = document.createElement("img");
+      img.src = actual;
+      img.alt = p.nombre;
+      media.prepend(img);
+    } else if(actual && actual.video){
+      const video = document.createElement("video");
+      video.src = actual.video;
+      video.controls = true;
+      media.prepend(video);
+    }
+    dots.forEach((d,i) => d.classList.toggle("activo", i === indice));
+  }
+
+  const dotsWrap = document.createElement("div");
+  dotsWrap.className = "dots";
+  const dots = medios.map((_, i) => {
+    const d = document.createElement("button");
+    d.type = "button";
+    d.addEventListener("click", () => { indice = i; pintarMedio(); });
+    dotsWrap.appendChild(d);
+    return d;
+  });
+  if(medios.length > 1) media.appendChild(dotsWrap);
+
+  pintarMedio();
+  card.appendChild(media);
+
+  const cuerpo = document.createElement("div");
+  cuerpo.className = "cuerpo";
+  cuerpo.innerHTML = `
+    <div class="nombre">${p.nombre}</div>
+    <div class="texto">${p.descripcion}</div>
+    <div class="fila-precio">
+      <span class="precio">${p.precio}</span>
+      <span class="disponible">${p.disponible ? "Disponible" : "Vendida"}</span>
+    </div>
+  `;
+  card.appendChild(cuerpo);
+
+  card.addEventListener("click", (e) => {
+    if(e.target.closest(".dots")) return;
+    abrirProductoModal(p, cat);
+  });
+  card.addEventListener("keypress", (e) => {
+    if(e.key === "Enter") abrirProductoModal(p, cat);
+  });
+
+  return card;
+}
+
+/* ============================================================
+   ENVÍO GENÉRICO DE SOLICITUDES (comisión y compra de producto)
+   -------------------------------------------------------------
+   Esta función solo junta la información y la deja lista.
+   Para que de verdad te llegue al correo, reemplaza el cuerpo
+   de esta función por tu propio envío, por ejemplo con
+   Formspree, EmailJS o tu backend:
+
+     fetch("https://formspree.io/f/TU_ID", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify(payload)
+     });
+
+   Por ahora, la solicitud queda registrada en la consola del
+   navegador (F12 > Consola) para que puedas revisarla mientras
+   conectas el envío real.
+   ============================================================ */
+function enviarInteres(payload){
+  console.log("Nueva solicitud:", payload);
+}
+
+/* -------------------- FORMULARIO DE COMISIÓN -------------------- */
+function enviarComision(e){
+  e.preventDefault();
+
+  enviarInteres({
+    tipo: "comision",
+    nombre: document.getElementById("c-nombre").value,
+    email: document.getElementById("c-email").value,
+    telefono: document.getElementById("c-telefono").value,
+    interes: document.getElementById("c-tipo").value,
+    mensaje: document.getElementById("c-mensaje").value
+  });
+
+  document.getElementById("confirmacionComision").classList.add("activa");
+  e.target.reset();
+  e.target.style.display = "none";
+}
+
+/* -------------------- MODAL DE PRODUCTO (pantalla completa) -------------------- */
+let productoActual = null;
+let indiceModalMedia = 0;
+
+function abrirProductoModal(producto, categoria){
+  productoActual = { producto, categoria };
+  indiceModalMedia = 0;
+
+  document.getElementById("modalCategoria").textContent = categoria.nombre;
+  document.getElementById("modalNombre").textContent = producto.nombre;
+  document.getElementById("modalDescripcion").textContent = producto.descripcion;
+  document.getElementById("modalPrecio").textContent = producto.precio;
+  document.getElementById("modalDisponible").textContent = producto.disponible ? "Disponible" : "Vendida";
+
+  pintarMediaModal(producto);
+
+  const formulario = document.getElementById("modalFormulario");
+  formulario.reset();
+  formulario.classList.remove("oculto");
+  document.getElementById("confirmacionProducto").classList.remove("activa");
+
+  document.getElementById("modalProducto").classList.add("activo");
+  document.body.style.overflow = "hidden";
+}
+
+function pintarMediaModal(producto){
+  const media = document.getElementById("modalMedia");
+  media.innerHTML = "";
+
+  const medios = [...producto.images];
+  if(producto.video) medios.push({ video: producto.video });
+
+  function pintar(){
+    media.querySelectorAll("img,video").forEach(el => el.remove());
+    const actual = medios[indiceModalMedia];
+    if(typeof actual === "string"){
+      const img = document.createElement("img");
+      img.src = actual;
+      img.alt = producto.nombre;
+      media.prepend(img);
+    } else if(actual && actual.video){
+      const video = document.createElement("video");
+      video.src = actual.video;
+      video.controls = true;
+      media.prepend(video);
+    }
+    media.querySelectorAll(".dots button").forEach((d,i) => d.classList.toggle("activo", i === indiceModalMedia));
+  }
+
+  if(medios.length > 1){
+    const dotsWrap = document.createElement("div");
+    dotsWrap.className = "dots";
+    medios.forEach((_, i) => {
+      const d = document.createElement("button");
+      d.type = "button";
+      d.addEventListener("click", () => { indiceModalMedia = i; pintar(); });
+      dotsWrap.appendChild(d);
+    });
+    media.appendChild(dotsWrap);
+  }
+  pintar();
+}
+
+function cerrarProductoModal(){
+  document.getElementById("modalProducto").classList.remove("activo");
+  document.body.style.overflow = "";
+}
+
+document.getElementById("modalProducto").addEventListener("click", (e) => {
+  if(e.target.id === "modalProducto") cerrarProductoModal();
+});
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Escape") cerrarProductoModal();
+});
+
+function enviarInteresProducto(e){
+  e.preventDefault();
+  if(!productoActual) return;
+
+  enviarInteres({
+    tipo: "producto",
+    producto: productoActual.producto.nombre,
+    precio: productoActual.producto.precio,
+    categoria: productoActual.categoria.nombre,
+    nombreComprador: document.getElementById("p-nombre").value,
+    emailComprador: document.getElementById("p-email").value
+  });
+
+  document.getElementById("modalFormulario").classList.add("oculto");
+  document.getElementById("confirmacionProducto").classList.add("activa");
+}
+
+/* ============================================================
+   RUTAS DIRECTAS POR SECCIÓN
+   Cada categoría queda disponible en su propio enlace:
+     tusitio.html#ceramica
+     tusitio.html#pintura
+     tusitio.html#croche
+     tusitio.html#upcycling
+     tusitio.html#comision
+   Al abrir cualquiera de esos enlaces, se entra directo a esa
+   sección sin pasar por el inicio.
+   ============================================================ */
+function enrutar(){
+  const hash = decodeURIComponent(location.hash.replace("#",""));
+
+  if(hash === ""){
+    irInicio(false);
+  } else if(hash === "comision"){
+    irComision(false);
+  } else if(CONFIG.categorias.some(c => c.id === hash)){
+    irCategoria(hash, false);
+  } else {
+    irInicio(false);
+  }
+}
+
+window.addEventListener("hashchange", enrutar);
+window.addEventListener("popstate", enrutar);
+
+construirRompecabezas();
+construirPublicaciones();
+enrutar();
+</script>
+</body>
+</html>
